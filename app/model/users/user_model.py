@@ -1,5 +1,6 @@
 from model.base.base_model import BaseSQLModel
 from model.users.orm_model import ORMUser
+from utils.jwt_verify import get_password_hash
 
 
 class UserModel(BaseSQLModel):
@@ -8,9 +9,9 @@ class UserModel(BaseSQLModel):
         super().__init__("user")
 
     def create_user(self, name: str, password: str, email: str) -> None:
-        if not self.check_user_exist_by_name(name):
+        if self.check_user_exist_by_name(name):
             return {"result": "fail", "message": "user already exist"}
-        user = ORMUser(name=name, email=email, password=password)
+        user = ORMUser(name=name, email=email, password=get_password_hash(password))
         self.session.add(user)
         self.session.commit()
         return {
@@ -21,11 +22,11 @@ class UserModel(BaseSQLModel):
 
     def check_user_exist_by_name(self, username: str) -> bool:
         user = self.session.query(ORMUser).filter(ORMUser.name == username).first()
-        return user is None
+        return user is not None
 
     def check_user_exist_by_id(self, user_id: str) -> bool:
         user = self.session.query(ORMUser).filter(ORMUser.id == user_id).first()
-        return user is None
+        return user is not None
 
     def get_user_id(self, username: str) -> int:
         user = self.session.query(ORMUser.id).filter(ORMUser.name == username).first()
@@ -51,3 +52,11 @@ class UserModel(BaseSQLModel):
         self.session.delete(user)
         self.session.commit()
         return {"result": "success", "message": "user deleted"}
+
+    def get_password(self, username: str) -> dict:
+        user = self.session.query(ORMUser.password).filter(ORMUser.name == username).first()
+        if user is None:
+            raise ValueError("user not exist")
+        # if user is None:
+        #     return {"result": "fail", "message": "user not exist"}
+        return user.password

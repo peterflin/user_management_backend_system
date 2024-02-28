@@ -11,7 +11,7 @@ class User(BaseModel):
 class UserCreateResult(BaseModel):
     result: str
     message: str
-    id: Union[str, None]
+    id: Union[int, None]
 
 
 class UserUpdate(BaseModel):
