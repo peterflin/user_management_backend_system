@@ -1,5 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import OperationalError
+from fastapi import HTTPException, status
 
 
 # engine會使用mysql+pymysql來進行登入

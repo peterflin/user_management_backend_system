@@ -1,15 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from routers.users.model import User, UserCreateResult, UserUpdate
-from model.users.user_model import UserModel
-from utils.jwt_verify import verify_password, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, TokenData, get_current_active_user
+from typing import Union
 from datetime import timedelta
+from routers.users.model import User, UserCreateSuccess, UserCreateFail, UserUpdate
+from model.users.user_model import UserModel
+from utils.jwt_verify import verify_password, ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_active_user
+
 
 
 users_router = APIRouter()
 
 
-@users_router.post("/users/create_user", tags=["User"], response_model=UserCreateResult)
+@users_router.post(
+    "/users/create_user",
+    tags=["User"],
+    response_model=Union[UserCreateSuccess, UserCreateFail]
+)
 def create_user(user_info: User):
     # return UserModel().create_user(**user_info.model_dump())
     return UserModel().create_user(name=user_info.name, password=user_info.password, email=user_info.email)
@@ -34,7 +40,6 @@ def delete_user(user_id: int, current_user: User = Depends(get_current_active_us
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user_password = UserModel().get_password(form_data.username)
     user = verify_password(form_data.password, user_password)
-    print(user)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

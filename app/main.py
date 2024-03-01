@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from routers.users.users_controller import users_router
-import pymysql
+import sqlalchemy
 
 
 app = FastAPI()
@@ -18,20 +18,12 @@ async def root():
     return {"Healthy": "True"}
 
 
-@app.exception_handler(pymysql.err.OperationalError)
-async def mysql_operation_exception_handler(request: Request, exc: RequestValidationError):
+@app.exception_handler(sqlalchemy.exc.OperationalError)
+async def mysql_operation_exception_handler(request: Request, exc: sqlalchemy.exc.OperationalError):
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
+        content=jsonable_encoder({"detail": "Database connection failed"}),
     )
-
-
-# @app.exception_handler()
-# async def validation_exception_handler(request: Request, exc: RequestValidationError):
-#     return JSONResponse(
-#         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#         content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
-#     )
 
 
 @app.exception_handler(RequestValidationError)

@@ -1,6 +1,7 @@
 from model.base.base_model import BaseSQLModel
 from model.users.orm_model import ORMUser
 from utils.jwt_verify import get_password_hash
+from utils.error_handler import handle_operational_error
 
 
 class UserModel(BaseSQLModel):
@@ -34,6 +35,8 @@ class UserModel(BaseSQLModel):
 
     def get_user_info_by_id(self, user_id: int) -> dict:
         user = self.session.query(ORMUser.id, ORMUser.name, ORMUser.email).filter(ORMUser.id == user_id).first()
+        if user is None:
+            return {"result": "fail", "data": "user not exist"}
         return {"result": "success", "data": dict(user)}
 
     def update_user_info(self, user_id: int, name: str, email: str) -> dict:

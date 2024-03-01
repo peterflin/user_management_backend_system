@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Union
+from typing import Union, Optional
 
 
 class User(BaseModel):
@@ -8,10 +8,15 @@ class User(BaseModel):
     password: str
 
 
-class UserCreateResult(BaseModel):
+class UserCreateSuccess(BaseModel):
     result: str
     message: str
-    id: Union[int, None]
+    id: int
+
+
+class UserCreateFail(BaseModel):
+    result: str
+    message: str
 
 
 class UserUpdate(BaseModel):
