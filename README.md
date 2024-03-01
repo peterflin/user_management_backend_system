@@ -16,10 +16,18 @@
 - MySQL
 
 ## 運行專案
+
+### 直接啟動
 ```bash
 cd app
 pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+### 使用Docker啟動
+```
+docker build -t user_management:1.0 .
+docker run --name user_management -p 8000:8000 user_management:1.0
 ```
 
 ## API Endpoint
