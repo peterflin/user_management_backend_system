@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from routers.users.users_controller import users_router
+from routers import users_router
 import sqlalchemy
 
 

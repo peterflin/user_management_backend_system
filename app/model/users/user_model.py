@@ -57,9 +57,9 @@ class UserModel(BaseSQLModel):
         return {"result": "success", "message": "user deleted"}
 
     def get_password(self, username: str) -> dict:
-        user = self.session.query(ORMUser.password).filter(ORMUser.name == username).first()
+        user = self.session.query(ORMUser.password, ORMUser.id).filter(ORMUser.name == username).first()
         if user is None:
             raise ValueError("user not exist")
         # if user is None:
         #     return {"result": "fail", "message": "user not exist"}
-        return user.password
+        return user
